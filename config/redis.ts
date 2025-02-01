@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
-import {createClient} from 'redis';
-import { promisify } from 'util';
+import { createClient } from 'redis';
 
 dotenv.config();
 
@@ -16,16 +15,22 @@ const client = createClient({
 client.on('error', err => console.log('Redis Client Error', err));
 
 export const connectRedis = async () =>  {
-    client.connect();
-    client.set('foo', 'bar');
+    await client.connect();
+    // Test connection
+    await client.set('foo', 'bar');
     const res = await client.get('foo');
-    console.log(res);
+    console.log('Redis connection test:', res);
 };
 
-export const redisClient = {
-    get: promisify(client.get).bind(client),
-    set: promisify(client.set).bind(client),
-    quit: promisify(client.quit).bind(client),
-    keys: promisify(client.keys).bind(client),
-    del: promisify(client.del).bind(client)
-};
+// Directly use the client with native Promise support
+export const redisClient = client;
+
+// Add type definitions for better autocomplete
+declare module 'redis' {
+    interface RedisType {
+        get: (key: string) => Promise<string | null>;
+        set: (key: string, value: string, options?: { EX?: number }) => Promise<string | null>;
+        keys: (pattern: string) => Promise<string[]>;
+        del: (keys: string | string[]) => Promise<number>;
+    }
+}

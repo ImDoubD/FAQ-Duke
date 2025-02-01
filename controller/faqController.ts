@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import { FAQ, FAQDocument } from '../model/faqModel';
 import { translateFAQ } from '../service/translationService';
-import { getCacheTranslation, setCacheTranslation } from '../service/cacheService';
+import { getCacheTranslation, invalidateCache, setCacheTranslation } from '../service/cacheService';
 
 export class FAQController {
-    public static async createFaq(req: Request, res: Response) {
+    public static async createFaq(req: Request, res: Response): Promise<void> {
         try{
             const { question, answer } = req.body;
             if(!question || !answer){
-                return res.status(400).json({ error: 'Missing required fields' });
+                res.status(400).json({ error: 'Missing required fields' });
             }
 
             const newFAQ : FAQDocument = new FAQ({
@@ -41,14 +41,65 @@ export class FAQController {
                 return {
                     id: faq._id,
                     question: faq.getTranslatedQuestion(lang),
-                    answer: cachedTranslation || faq.answer,
-                    translations: Array.from(faq.translations.entries())
+                    answer: cachedTranslation || faq.answer
+                    // translations: Array.from(faq.translations.entries())
                 };
             }));
             
             res.json(response);
         }catch(error){
             console.error('Get FAQs error: ', error);
+            res.status(500).json({message : 'Internal Server Error'});
+        }
+    }
+
+    public static async updateFAQ(req: Request, res: Response): Promise<void> {
+        try{
+            const { id } = req.query;
+            const { question, answer } = req.body;
+
+            const faq = await FAQ.findById(id);
+            if(!faq){
+                res.status(404).json({ message: 'FAQ not found' });
+                return;
+            }
+
+            if(question) faq.question = question;
+            if(answer) faq.answer = answer;
+
+            const updatedFaq = await faq.save();
+            await invalidateCache(id as string);
+            translateFAQ(faq).catch(error => console.error('Retranslation Failed: ', error));
+            
+            res.json({
+                id: updatedFaq._id,
+                question: updatedFaq.question,
+                answer: updatedFaq.answer,
+                message: 'FAQ updated. Retranslating content'
+
+            });
+        }catch(error){
+            console.error('Update FAQ error: ', error);
+            res.status(500).json({message : 'Internal Server Error'});
+        }
+    }
+
+    public static async deleteFAQ(req: Request, res: Response): Promise<void> {
+        try{
+            const { id } = req.query;
+            const deletedFaq = await FAQ.findByIdAndDelete(id);
+            if(!deletedFaq){
+                res.status(404).json({ message: 'FAQ not found' });
+                return;
+            }
+
+            await invalidateCache(id as string);
+            res.json({ 
+                message: 'FAQ deleted' ,
+                deletedId: deletedFaq._id
+            });
+        }catch(error){
+            console.error('Delete FAQ error: ', error);
             res.status(500).json({message : 'Internal Server Error'});
         }
     }

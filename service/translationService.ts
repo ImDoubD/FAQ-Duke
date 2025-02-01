@@ -24,12 +24,15 @@ export const translateFAQ = async (faq: FAQDocument) => {
             const questionResponse = await axios.post<TranslationResponse>(
                 'https://translation.googleapis.com/language/translate/v2', 
                 {
-                    ques: faq.question,
+                    q: faq.question,
                     target: lang,
                     format: 'text'
                 },
                 {
-                    params: { key : process.env.GOOGLE_TRANSLATE_KEY }
+                    params: { 
+                        key : process.env.GOOGLE_TRANSLATE_KEY,
+                        alt: 'json'
+                    }
                 }
             );
 
@@ -37,25 +40,36 @@ export const translateFAQ = async (faq: FAQDocument) => {
             const answerResponse = await axios.post<TranslationResponse>(
                 'https://translation.googleapis.com/language/translate/v2', 
                 {
-                    ques: faq.answer,
+                    q: faq.answer,
                     target: lang,
                     format: 'html'
                 },
                 {
-                    params: { key : process.env.GOOGLE_TRANSLATE_KEY }
+                    params: { 
+                        key : process.env.GOOGLE_TRANSLATE_KEY,
+                        alt: 'json'
+                    }
                 }
             );
 
             const questionTranslation = questionResponse.data.data.translations[0].translatedText;
 
+            console.log("Duke: ",questionTranslation);
             //answer translation to be set in cache
             const answerTranslation = answerResponse.data.data.translations[0].translatedText;
-            
+
+            console.log("Duke Answer: ",answerTranslation);
+
             faq.translations.set(lang, questionTranslation);
             await setCacheTranslation(faq._id.toString(), lang, answerTranslation);
         }
         await faq.save();
     }catch(error){
-        console.error('Error translating FAQ:', error);
+        if (axios.isAxiosError(error)) {
+            console.error('Translation error details:', error.response?.data || error.message);
+        } else {
+            console.error('Translation error details:', (error as Error).message);
+        }
+        throw new Error('Translation failed');
     }
 }
