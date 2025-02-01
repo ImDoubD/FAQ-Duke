@@ -27,4 +27,4 @@ faqSchema.methods.getTranslatedQuestion = function(lang: string): string {
 };
 
 export const FAQ = model<IFAQ, FAQModel>('FAQ', faqSchema);
-export type FAQDocument = IFAQ;
+export type FAQDocument = IFAQ;  //type format of IFAQ
