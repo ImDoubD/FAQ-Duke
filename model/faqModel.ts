@@ -1,4 +1,4 @@
-import { Document, model, Schema } from 'mongoose';
+import { Document, model, Schema, Model } from 'mongoose';
 
 export interface IFAQ extends Document {
   question: string;                                     //original eng questions
@@ -18,9 +18,12 @@ const faqSchema = new Schema<IFAQ>({
   }
 });
 
+interface FAQModel extends Model<IFAQ> {}
+
 // Translated question get method
 faqSchema.methods.getTranslatedQuestion = function(lang: string): string {
   return this.translations.get(lang) || this.question;
 };
 
-export const FAQ = model<IFAQ>('FAQ', faqSchema);
+export const FAQ = model<IFAQ, FAQModel>('FAQ', faqSchema);
+export type FAQDocument = IFAQ;
