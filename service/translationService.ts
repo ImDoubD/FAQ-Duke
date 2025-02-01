@@ -2,6 +2,7 @@ import { Translate } from "@google-cloud/translate/build/src/v2";
 import { FAQDocument } from "../model/faqModel";
 import dotenv from "dotenv";
 import axios from 'axios';
+import { setCacheTranslation } from "./cacheService";
 
 dotenv.config();
 
@@ -46,9 +47,12 @@ export const translateFAQ = async (faq: FAQDocument) => {
             );
 
             const questionTranslation = questionResponse.data.data.translations[0].translatedText;
+
+            //answer translation to be set in cache
             const answerTranslation = answerResponse.data.data.translations[0].translatedText;
             
             faq.translations.set(lang, questionTranslation);
+            await setCacheTranslation(faq._id.toString(), lang, answerTranslation);
         }
         await faq.save();
     }catch(error){

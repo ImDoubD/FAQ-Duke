@@ -1,6 +1,7 @@
-import { Document, model, Schema, Model } from 'mongoose';
+import { Document, model, Schema, Model, ObjectId } from 'mongoose';
 
 export interface IFAQ extends Document {
+    _id: ObjectId;
   question: string;                                     //original eng questions
   answer: string;                                      //content from WYSIWYG (in form of HTML)
   translations: Map<string, string>;                  //key: language code, value: translated question

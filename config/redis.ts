@@ -25,5 +25,7 @@ export const connectRedis = async () =>  {
 export const redisClient = {
     get: promisify(client.get).bind(client),
     set: promisify(client.set).bind(client),
-    quit: promisify(client.quit).bind(client)
+    quit: promisify(client.quit).bind(client),
+    keys: promisify(client.keys).bind(client),
+    del: promisify(client.del).bind(client)
 };
