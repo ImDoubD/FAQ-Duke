@@ -44,18 +44,18 @@ docker-compose up
 
 - Endpoints \
 Method	Endpoint	Description
-POST	/	Create new FAQ
-GET	/	Get all FAQs
-PUT	/:id	Update FAQ by ID
-DELETE	/:id	Delete FAQ by ID
+POST `http://localhost:3000/api/faq/`	Create new FAQ
+GET	`http://localhost:3000/api/faq?lang=hi`	Get all FAQs as per lang
+PUT	`http://localhost:3000/api/faq?id=`	Update FAQ by ID
+DELETE `http://localhost:3000/api/faq?id=`	Delete FAQ by ID
 
 - Create FAQ
-POST /api/v1/faqs \
+POST /api/faqs \
 Background Translation has been activated.
 
 ``` bash
 Copy
-curl -X POST http://localhost:3000/api/v1/faqs \
+curl -X POST http://localhost:3000/api/faqs \
   -H "Content-Type: application/json" \
   -d '{
     "question": "Return policy?",
@@ -70,11 +70,11 @@ Response:
 }
 ```
 - Get All FAQs
-GET /api/v1/faqs
+GET /api/faqs
 
 ```bash
 Copy
-curl "http://localhost:3000/api/v1/faqs?lang=hi"
+curl "http://localhost:3000/api/faqs?lang=hi"
 Response:
 [
   {
@@ -85,12 +85,12 @@ Response:
 ]
 ```
 - Update FAQ
-PUT /api/v1/faqs/:id \
+PUT /api/faqs?id= \
 Background Re-Translation taking place with first clearing the cache , then again setting it.
 
 ```bash
 Copy
-curl -X PUT http://localhost:3000/api/v1/faqs?id=65a1bcf86cd799439011 \
+curl -X PUT http://localhost:3000/api/faqs?id=65a1bcf86cd799439011 \
   -H "Content-Type: application/json" \
   -d '{"answer": "<p>Updated 45-day policy</p>"}'
 
@@ -103,11 +103,11 @@ Response:
 }
 ```
 Delete FAQ
-DELETE /api/v1/faqs/:id
+DELETE /api/faqs?id=
 
 ```bash
 Copy
-curl -X DELETE http://localhost:3000/api/v1/faqs?id=65a1bcf86cd799439011
+curl -X DELETE http://localhost:3000/api/faqs?id=65a1bcf86cd799439011
 Response:
 {
   "message": "FAQ deleted",
