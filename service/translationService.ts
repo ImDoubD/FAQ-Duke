@@ -21,44 +21,28 @@ export const translateFAQ = async (faq: FAQDocument) => {
     try{
         for(const lang of targetLangs) {
             // Translate question
-            const questionResponse = await axios.post<TranslationResponse>(
-                'https://translation.googleapis.com/language/translate/v2', 
+            const response = await axios.post<TranslationResponse>(
+                'https://translation.googleapis.com/language/translate/v2',
                 {
-                    q: faq.question,
+                    q: [faq.question, faq.answer],
                     target: lang,
+                    source: 'en',  // Explicitly define source language
                     format: 'text'
                 },
                 {
-                    params: { 
-                        key : process.env.GOOGLE_TRANSLATE_KEY,
-                        alt: 'json'
-                    }
+                    params: { key: process.env.GOOGLE_TRANSLATE_KEY }
                 }
             );
 
-            // Translate answer
-            const answerResponse = await axios.post<TranslationResponse>(
-                'https://translation.googleapis.com/language/translate/v2', 
-                {
-                    q: faq.answer,
-                    target: lang,
-                    format: 'html'
-                },
-                {
-                    params: { 
-                        key : process.env.GOOGLE_TRANSLATE_KEY,
-                        alt: 'json'
-                    }
-                }
-            );
+            if (response.data?.data?.translations?.length < 2) {
+                console.error(`Translation failed for ${lang}`);
+                continue;
+            }
 
-            const questionTranslation = questionResponse.data.data.translations[0].translatedText;
+            const [questionTranslation, answerTranslation] = response.data.data.translations.map(t => t.translatedText);
 
-            console.log("Duke: ",questionTranslation);
-            //answer translation to be set in cache
-            const answerTranslation = answerResponse.data.data.translations[0].translatedText;
-
-            console.log("Duke Answer: ",answerTranslation);
+            console.log(`[${lang}] Question:`, questionTranslation);
+            console.log(`[${lang}] Answer:`, answerTranslation);
 
             faq.translations.set(lang, questionTranslation);
             await setCacheTranslation(faq._id.toString(), lang, answerTranslation);
