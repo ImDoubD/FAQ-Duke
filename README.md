@@ -12,6 +12,7 @@ A RESTful API for managing Frequently Asked Questions (FAQs) with multi-language
 - Multi-language question translations
 - Automatic cache invalidation
 - Comprehensive error handling
+- Docker Ready Deployment
 
 ## Installation
 
@@ -28,6 +29,12 @@ npm run start
 
 # Run tests
 npm test
+```
+
+### Docker Deployment
+```bash
+docker-compose build
+docker-compose up
 ```
 
 ### API Documentation
@@ -151,3 +158,4 @@ interface IFAQ {
   - On FAQ update
   - On FAQ deletion
   - Automatic expiration
+
