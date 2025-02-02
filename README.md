@@ -54,7 +54,6 @@ POST /api/faqs \
 Background Translation has been activated.
 
 ``` bash
-Copy
 curl -X POST http://localhost:3000/api/faqs \
   -H "Content-Type: application/json" \
   -d '{
@@ -73,7 +72,6 @@ Response:
 GET /api/faqs
 
 ```bash
-Copy
 curl "http://localhost:3000/api/faqs?lang=hi"
 Response:
 [
@@ -89,7 +87,6 @@ PUT /api/faqs?id= \
 Background Re-Translation taking place with first clearing the cache , then again setting it.
 
 ```bash
-Copy
 curl -X PUT http://localhost:3000/api/faqs?id=65a1bcf86cd799439011 \
   -H "Content-Type: application/json" \
   -d '{"answer": "<p>Updated 45-day policy</p>"}'
@@ -106,7 +103,6 @@ Delete FAQ
 DELETE /api/faqs?id=
 
 ```bash
-Copy
 curl -X DELETE http://localhost:3000/api/faqs?id=65a1bcf86cd799439011
 Response:
 {
