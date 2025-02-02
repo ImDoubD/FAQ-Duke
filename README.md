@@ -43,11 +43,11 @@ docker-compose up
 `http://localhost:3000/api/v1/faqs`
 
 - Endpoints \
-Method	Endpoint	Description
-POST `http://localhost:3000/api/faq/`	Create new FAQ
-GET	`http://localhost:3000/api/faq?lang=hi`	Get all FAQs as per lang
-PUT	`http://localhost:3000/api/faq?id=`	Update FAQ by ID
-DELETE `http://localhost:3000/api/faq?id=`	Delete FAQ by ID
+Method	Endpoint	Description \
+POST `http://localhost:3000/api/faq/`	Create new FAQ \
+GET	`http://localhost:3000/api/faq?lang=hi`	Get all FAQs as per lang \
+PUT	`http://localhost:3000/api/faq?id=`	Update FAQ by ID \
+DELETE `http://localhost:3000/api/faq?id=`	Delete FAQ by ID \
 
 - Create FAQ
 POST /api/faqs \
