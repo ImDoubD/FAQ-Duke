@@ -42,7 +42,6 @@ export class FAQController {
                     id: faq._id,
                     question: faq.getTranslatedQuestion(lang),
                     answer: cachedTranslation || faq.answer
-                    // translations: Array.from(faq.translations.entries())
                 };
             }));
             
