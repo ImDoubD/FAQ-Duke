@@ -16,6 +16,9 @@ interface TranslationResponse {
 }
 
 export const translateFAQ = async (faq: FAQDocument) => {
+    if (!faq.translations) {
+        faq.translations = new Map();
+    }
     const targetLangs = ['hi', 'bn', 'es', 'fr'];
 
     try{
@@ -44,7 +47,9 @@ export const translateFAQ = async (faq: FAQDocument) => {
             console.log(`[${lang}] Question:`, questionTranslation);
             console.log(`[${lang}] Answer:`, answerTranslation);
 
-            faq.translations.set(lang, questionTranslation);
+            if(faq.translations){
+                faq.translations.set(lang, questionTranslation);
+            }
             await setCacheTranslation(faq._id.toString(), lang, answerTranslation);
         }
         await faq.save();

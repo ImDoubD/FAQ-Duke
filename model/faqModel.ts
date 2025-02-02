@@ -4,7 +4,7 @@ export interface IFAQ extends Document {
     _id: ObjectId;
   question: string;                                     //original eng questions
   answer: string;                                      //content from WYSIWYG (in form of HTML)
-  translations: Map<string, string>;                  //key: language code, value: translated question
+  translations?: Map<string, string>;                  //key: language code, value: translated question
   getTranslatedQuestion: (lang: string) => string;
 }
 
